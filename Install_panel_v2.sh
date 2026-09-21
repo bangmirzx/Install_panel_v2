@@ -260,7 +260,7 @@ main_menu() {
       6) create_node ;;
       7) reset_admin ;;
       8) change_vps_pass ;;
-        x|X) echo -e "${BOLD}${GREEN}Keluar dari menu...${NC}"; break ;;
+        6|6) echo -e "${BOLD}${GREEN}Keluar dari menu...${NC}"; break ;;
   *) print_error "Menu tidak ada!"; sleep 1 ;;
     esac
     echo -n -e "${BOLD}Tekan ENTER untuk kembali...${NC}"; read
