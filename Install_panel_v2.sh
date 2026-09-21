@@ -196,12 +196,27 @@ start_wings() {
 create_node() {
   print_info "Membuat Node & Location otomatis..."
   cd /var/www/pterodactyl
+
   php artisan p:location:make --short=SG --long="Singapore - Mirzx" >/dev/null 2>&1 || true
+
   local RAM=$(free -m | awk '/Mem:/{print $2}')
-  php artisan p:node:make --name=NODES --locationId=1 --fqdn=$(curl -s ifconfig.me) --scheme=https --memory=$RAM --disk=$RAM --allocations=100 || true
-  php artisan p:node:configuration 1 > /etc/pterodactyl/config.yml
-  chmod 600 /etc/pterodactyl/config.yml
-  systemctl restart wings
+  local IPVPS=$(curl -s ifconfig.me)
+
+  # Buat node (SEMUA flag wajib diisi agar tidak interaktif)
+  php artisan p:node:make \
+    --name=NODES \
+    --locationId=1 \
+    --fqdn="$IPVPS" \
+    --scheme=http \
+    --memory="$RAM" \
+    --disk="$RAM" \
+    --uploadSize=100 \
+    --daemonSftp=2022 \
+    --daemonListen=8080 || true
+
+  # Buat allocation untuk node ID 1
+  php artisan p:node:allocation:make 1 --ip="$IPVPS" --port=25565-25665 || true
+
   print_success "Node & Location berhasil dibuat!"
 }
 
